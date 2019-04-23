@@ -2,11 +2,21 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const productsRoute = require('./api/routes/products');
 const orderRoute = require('./api/routes/orders');
+const userRoute = require('./api/routes/users');
+
+mongoose.connect(
+  'mongodb+srv://himachallad:' +
+    process.env.MONGO_ATLAS_PW +
+    '@cluster0-yswwu.mongodb.net/test?retryWrites=true',
+  { useNewUrlParser: true }
+);
 
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -26,6 +36,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/products', productsRoute);
 app.use('/orders', orderRoute);
+app.use('/users', userRoute);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
